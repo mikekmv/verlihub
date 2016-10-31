@@ -68,6 +68,7 @@ std::ostream & operator<< (std::ostream &os, const cTime &t)
 			buf[strlen(buf)] = 0;
 			os << buf;
 			break;
+
 		case 2:
 			rest = t.tv_sec;
 			i = 0;
@@ -117,8 +118,15 @@ std::ostream & operator<< (std::ostream &os, const cTime &t)
 				os << ostr.str().substr(1); // strip space
 
 			break;
+
 		default:
-			os << " " << autosprintf(ngettext("%ld sec", "%ld secs", t.tv_sec), t.tv_sec) << " " << autosprintf(ngettext("%ld usec", "%ld usecs", t.tv_usec), t.tv_usec);
+			#ifdef HAVE_OPENBSD
+				os << " " << autosprintf(ngettext("%lld sec", "%lld secs", t.tv_sec), t.tv_sec);
+			#else
+				os << " " << autosprintf(ngettext("%ld sec", "%ld secs", t.tv_sec), t.tv_sec);
+			#endif
+
+			os << " " << autosprintf(ngettext("%ld usec", "%ld usecs", t.tv_usec), t.tv_usec);
 			break;
 	}
 
